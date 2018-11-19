@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const firebase = require("firebase");
 
-const fetchNoticeAndSendNotifications = require("../trigger-notifications");
+const fetchNotices = require("../src/fetch-notices");
+const pushNotifications = require("../src/push-notification");
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -9,8 +11,22 @@ router.get("/", function(req, res, next) {
 });
 
 router.get("/notices", async function(req, res) {
-  const notices = await fetchNoticeAndSendNotifications();
+  const notices = await fetchNotices();
   res.json(notices);
+});
+
+router.get("/push", function(req, res, next) {
+  pushNotifications();
+  res.send(true);
+});
+
+router.post("/save/subscribers", function(req, res) {
+  const userHash = req.body.keys.auth;
+  firebase
+    .database()
+    .ref("subscribers/" + userHash)
+    .set(req.body);
+  res.send(true);
 });
 
 module.exports = router;

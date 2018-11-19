@@ -1,19 +1,31 @@
+require;
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const firebase = require("firebase");
+const exphbs = require("express-handlebars");
 
-var fetchNoticeAndSendNotifications = require("./trigger-notifications");
+var fetchNotices = require("./src/fetch-notices");
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
 
 var app = express();
 
+var config = {
+  apiKey: "AIzaSyA-yrgtO_0RL1U_k85ZoR_Z3_1j_xfEZ1A",
+  authDomain: "iost-notice-app.firebaseapp.com",
+  databaseURL: "https://iost-notice-app.firebaseio.com",
+  projectId: "iost-notice-app",
+  storageBucket: "iost-notice-app.appspot.com",
+  messagingSenderId: "716852103684"
+};
+firebase.initializeApp(config);
+
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -22,7 +34,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 
 /* Run timer */
 var TOTAL_MILISECONDS_IN_MINUTE = 60000;
@@ -38,7 +49,7 @@ function checkTimeAndSendNotifications() {
   var isMinuteDivisibleByFive = Boolean(currentMinute % 5);
   console.log(currentMinute);
   if (!isMinuteDivisibleByFive) {
-    fetchNoticeAndSendNotifications();
+    fetchNotices();
   }
 }
 

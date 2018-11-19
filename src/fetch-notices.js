@@ -2,11 +2,26 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const REQUEST_BASE_URL = "https://tuiost.edu.np";
-const TOTAL_NOTICE_PAGE = 4;
 
-const fetchNoticeAndSendNotifications = async () => {
-  console.log("Pushing notifications");
-  var notices = [];
+const countNoPages = async () => {
+  let pageNo = 0;
+
+  try {
+    const response = await axios.get(REQUEST_BASE_URL);
+    if (response && response.status == 200) {
+      var $ = cheerio.load(response.data);
+      var paginationSel = $("#notices .pagination li");
+      pageNo = paginationSel.length - 2;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return pageNo;
+};
+
+const fetchNotices = async () => {
+  let notices = [];
+  const TOTAL_NOTICE_PAGE = await countNoPages();
 
   for (var i = 1; i <= TOTAL_NOTICE_PAGE; i++) {
     const REQUEST_URL = `${REQUEST_BASE_URL}/?page=${i}`;
@@ -36,4 +51,4 @@ const fetchNoticeAndSendNotifications = async () => {
   return notices;
 };
 
-module.exports = fetchNoticeAndSendNotifications;
+module.exports = fetchNotices;
