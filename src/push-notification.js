@@ -19,7 +19,7 @@ const pushNotifications = async () => {
   firebase
     .database()
     .ref("notices/")
-    .on("value", function(d) {
+    .once("value", function(d) {
       const noticeObj = d.val();
       let newNotices = [];
       let dbNotices = [];
@@ -45,7 +45,7 @@ function handleNewNotices(notices) {
   firebase
     .database()
     .ref("subscribers/")
-    .on("value", function(d) {
+    .once("value", function(d) {
       const subscribersObj = d.val();
       let subscribers = [];
       if (subscribersObj) {
