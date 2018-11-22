@@ -7,7 +7,7 @@ var logger = require("morgan");
 const firebase = require("firebase");
 const exphbs = require("express-handlebars");
 
-var fetchNotices = require("./src/fetch-notices");
+const pushNotifications = require("./src/push-notification");
 
 var indexRouter = require("./routes/index");
 
@@ -38,7 +38,7 @@ app.use("/", indexRouter);
 /* Run timer */
 var TOTAL_MILISECONDS_IN_MINUTE = 60000;
 var intervalWork = setInterval(function() {
-  // checkTimeAndSendNotifications();
+  checkTimeAndSendNotifications();
 }, TOTAL_MILISECONDS_IN_MINUTE);
 
 // checkTimeAndSendNotifications();
@@ -46,10 +46,11 @@ var intervalWork = setInterval(function() {
 function checkTimeAndSendNotifications() {
   var currentDate = new Date();
   var currentMinute = currentDate.getMinutes();
-  var isMinuteDivisibleByFive = Boolean(currentMinute % 5);
+  // var isMinuteDivisibleByFive = !Boolean(currentMinute % 5);
   console.log(currentMinute);
-  if (!isMinuteDivisibleByFive) {
-    fetchNotices();
+  var isItFirstMinute = currentMinute === 1;
+  if (isItFirstMinute) {
+    pushNotifications();
   }
 }
 

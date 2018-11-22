@@ -15,10 +15,10 @@ router.get("/notices", async function(req, res) {
   res.json(notices);
 });
 
-router.get("/push", function(req, res, next) {
+/* router.get("/push", function(req, res, next) {
   pushNotifications();
   res.send(true);
-});
+}); */
 
 router.post("/save/subscribers", function(req, res) {
   const userHash = req.body.keys.auth;
