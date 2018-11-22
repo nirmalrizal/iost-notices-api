@@ -48,7 +48,7 @@ function checkTimeAndSendNotifications() {
   var currentMinute = currentDate.getMinutes();
   // var isMinuteDivisibleByFive = !Boolean(currentMinute % 5);
   console.log(currentMinute);
-  var isItFirstMinute = currentMinute === 5;
+  var isItFirstMinute = currentMinute === 10;
   if (isItFirstMinute) {
     console.log("Call the push function");
     pushNotifications();
