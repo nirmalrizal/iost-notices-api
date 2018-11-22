@@ -1,16 +1,15 @@
+require("dotenv").config();
 const firebase = require("firebase");
 const webpush = require("web-push");
 
 const fetchNotices = require("../src/fetch-notices");
 
 // Initialize web-push
-webpush.setGCMAPIKey(
-  "AAAAu_5Hx98:APA91bEp83PtYMrByizUw5x-FH8tyU6ToWtvPYx_b0lApu8P9RFOfzwcdSX5A4rMBMuYv0jF0Ty2o2XYqFIsle025wDzlQ7SLcTVTM1rNMvEVuDbGCXNyTVJhfr7DVU1XVFAtoTjz-Ab"
-);
+webpush.setGCMAPIKey(process.env.GCMAPI_KEY);
 webpush.setVapidDetails(
   "mailto:nirmalrijal41@gmail.com",
-  "BEYEcsgymIys7d7rrCHgkLH_V5pBlUZxVqqrn2Vd3ubvEsOdw9dSMVolPZRnBOfScBJOxeBiUl-clrhmO7G4Sb0",
-  "sI3efmZYroqjbQ_mnSn474mt7mQC8NR-meVFKdUpe5c"
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
 );
 
 const pushNotifications = async () => {
@@ -50,12 +49,12 @@ function handleNewNotices(notices) {
       let subscribers = [];
       if (subscribersObj) {
         subscribers = Object.entries(subscribersObj);
-
-        /* Loop over new notices, save them and send notifications */
-        notices.forEach(notice => {
-          saveAndSendForSingleNotice(notice, subscribers);
-        });
       }
+
+      /* Loop over new notices, save them and send notifications */
+      notices.forEach(notice => {
+        saveAndSendForSingleNotice(notice, subscribers);
+      });
     });
 }
 
@@ -72,15 +71,16 @@ function saveAndSendForSingleNotice(notice, subscribers) {
 }
 
 function sendNotificationToSingleSubscriber(subscriber, notice) {
-  console.log(subscriber);
   webpush
     .sendNotification(subscriber, JSON.stringify(notice))
     .then(() => {
-      console.log("Pushed");
+      console.log("Pushed : " + new Date());
     })
     .catch(err => {
-      // console.log(err);
-      console.log("Error on pushing");
+      firebase
+        .database()
+        .ref("subscribers/" + subscriber.keys.auth)
+        .remove();
     });
 }
 

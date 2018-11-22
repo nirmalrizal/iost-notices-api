@@ -1,4 +1,4 @@
-require;
+require("dotenv").config();
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -14,12 +14,12 @@ var indexRouter = require("./routes/index");
 var app = express();
 
 var config = {
-  apiKey: "AIzaSyA-yrgtO_0RL1U_k85ZoR_Z3_1j_xfEZ1A",
-  authDomain: "iost-notice-app.firebaseapp.com",
-  databaseURL: "https://iost-notice-app.firebaseio.com",
-  projectId: "iost-notice-app",
-  storageBucket: "iost-notice-app.appspot.com",
-  messagingSenderId: "716852103684"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_API_KEY,
+  databaseURL: process.env.FIREBASE_DB_URL,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSENGER_ID
 };
 firebase.initializeApp(config);
 

@@ -29,4 +29,13 @@ router.post("/save/subscribers", function(req, res) {
   res.send(true);
 });
 
+router.post("/remove/subscriber", function(req, res) {
+  const userHash = req.body.keys.auth;
+  firebase
+    .database()
+    .ref("subscribers/" + userHash)
+    .remove();
+  res.send(true);
+});
+
 module.exports = router;

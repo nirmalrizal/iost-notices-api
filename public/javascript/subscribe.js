@@ -23,13 +23,9 @@ function urlB64ToUint8Array(base64String) {
 }
 
 if ("serviceWorker" in navigator && "PushManager" in window) {
-  console.log("Service Worker and Push is supported");
-
   navigator.serviceWorker
     .register("sw.js")
     .then(function(swReg) {
-      console.log("Service Worker is registered", swReg);
-
       swRegistration = swReg;
       initializeUI();
     })
@@ -37,17 +33,14 @@ if ("serviceWorker" in navigator && "PushManager" in window) {
       console.error("Service Worker Error", error);
     });
 } else {
-  console.warn("Push messaging is not supported");
-  $(noticesSel).html(
-    '<div class="alert alert-warning"><i class="fa fa-info-circle"></i> Push messaging is not supported</div>'
-  );
+  showAlertMessage("Push messaging is not supported", "w");
 }
 
 function initializeUI() {
   pushButton.addEventListener("click", function() {
     pushButton.disabled = true;
     if (isSubscribed) {
-      //   unsubscribeUser();
+      unsubscribeUser();
     } else {
       subscribeUser();
     }
@@ -57,37 +50,29 @@ function initializeUI() {
   swRegistration.pushManager.getSubscription().then(function(subscription) {
     isSubscribed = !(subscription === null);
 
-    if (isSubscribed) {
-      console.log("User IS subscribed.");
-    } else {
-      console.log("User is NOT subscribed.");
-    }
-
     updateBtn();
   });
 }
 
 function updateBtn() {
   if (Notification.permission === "denied") {
-    $(noticesSel).html(
-      '<div class="alert alert-warning"><i class="fa fa-info-circle"></i> Push Messaging Blocked.</div>'
-    );
+    showAlertMessage("Push Messaging Blocked", "w");
     pushButton.disabled = true;
     updateSubscriptionOnServer(null);
     return;
   }
 
   if (isSubscribed) {
-    $("#btnSubscribe").html('<i class="fa fa-bell"></i> Subscribed');
-    $(noticesSel).html(
-      '<div class="alert alert-success"><i class="fa fa-info-circle"></i> You will receive notification when IOST publishes new notice</div>'
+    $("#btnSubscribe").html('<i class="fa fa-bell"></i> Unsubscribe');
+    showAlertMessage(
+      "You will receive notification when IOST publishes new notice",
+      "s"
     );
   } else {
-    $(noticesSel).html(
-      '<div class="alert alert-info"><i class="fa fa-info-circle"></i> Enable Push Messaging</div>'
-    );
-    pushButton.disabled = false;
+    $("#btnSubscribe").html('<i class="fa fa-bell"></i> Subscribe');
+    showAlertMessage("Enable Push Messaging", "i");
   }
+  pushButton.disabled = false;
 }
 
 function subscribeUser() {
@@ -98,8 +83,6 @@ function subscribeUser() {
       applicationServerKey: applicationServerKey
     })
     .then(function(subscription) {
-      console.log("User is subscribed.");
-
       updateSubscriptionOnServer(subscription);
 
       isSubscribed = true;
@@ -127,8 +110,6 @@ function unsubscribeUser() {
     })
     .then(function() {
       updateSubscriptionOnServer(null, subscriptionInfo);
-
-      console.log("User is unsubscribed.");
       isSubscribed = false;
 
       updateBtn();
@@ -136,20 +117,10 @@ function unsubscribeUser() {
 }
 
 function updateSubscriptionOnServer(subscription, subscriptionInfo) {
-  // TODO: Send subscription to application server
-
-  /* const subscriptionJson = document.querySelector(".js-subscription-json");
-  const subscriptionDetails = document.querySelector(
-    ".js-subscription-details"
-  ); */
-
   if (subscription) {
-    // subscriptionJson.textContent = JSON.stringify(subscription);
     saveTheSubscription(subscription, "/save/subscribers");
-    // subscriptionDetails.classList.remove("is-invisible");
   } else {
-    // saveTheSubscription(subscriptionInfo, "/remove/subscriber");
-    // subscriptionDetails.classList.add("is-invisible");
+    saveTheSubscription(subscriptionInfo, "/remove/subscriber");
   }
 }
 
@@ -167,4 +138,23 @@ function saveTheSubscription(subscription, url) {
     .then(function(data) {
       console.log(data);
     });
+}
+
+function showAlertMessage(message, messageType) {
+  let alertType = "info";
+  const allAlertTypes = {
+    s: "success",
+    d: "danger",
+    i: "info",
+    w: "warning"
+  };
+  alertType = allAlertTypes[messageType];
+
+  $(noticesSel).html(
+    '<div class="alert alert-' +
+      alertType +
+      '"><i class="fa fa-info-circle"></i> ' +
+      message +
+      "</div>"
+  );
 }
