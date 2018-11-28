@@ -42,7 +42,7 @@ var intervalWork = setInterval(function() {
   checkTimeAndSendNotifications();
 }, TOTAL_MILISECONDS_IN_MINUTE);
 
-// pushNotifications();
+pushNotifications();
 
 function checkTimeAndSendNotifications() {
   var currentDate = new Date();
