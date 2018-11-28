@@ -4,6 +4,7 @@ const firebase = require("firebase");
 
 const fetchNotices = require("../src/fetch-notices");
 const pushNotifications = require("../src/push-notification");
+const handleBotUpdates = require("../src/telegram-bot-custom").handleBotUpdates;
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -39,7 +40,7 @@ router.post("/remove/subscriber", function(req, res) {
 });
 
 router.post("/get/telegram/updates", function(req, res) {
-  console.log(req.body);
+  handleBotUpdates(req.body());
   res.send(true);
 });
 
