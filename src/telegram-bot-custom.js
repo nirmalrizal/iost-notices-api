@@ -5,21 +5,27 @@ const axios = require("axios");
 const botBaseUrl = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
 
 function handleBotUpdates(data) {
-  const { chat } = data;
-  //   const fromId = from.id;
+  console.log("I am here");
+  const { from, chat, entities, text } = data.message;
   const chatId = chat.id;
-  if (data.entities && data.entities.type === "bot_command") {
-    console.log("I will handle this");
+  const fromId = from.id;
+  if (entities && entities[0].type === "bot_command") {
+    console.log(text);
+    if (text === "/start") {
+      saveTelegramUsers(fromId, chatId);
+      sendReplyToUser(
+        chatId,
+        "You will receive message whenever IOST publishes any notices."
+      );
+    } else {
+      sendReplyToUser(chatId, `No action found for command : ${text}`);
+    }
   } else {
     sendReplyToUser(
       chatId,
       "We are very sorry. You cannot interact with the bot."
     );
   }
-}
-
-function sendReplyToUser(chatId, message) {
-  axios.get(`${botBaseUrl}/sendMessage?chat_id=${chatId}&text=${message}`);
 }
 
 function sendNoticeToUser(notices) {
@@ -35,7 +41,7 @@ function sendNoticeToUser(notices) {
         }
         notices.forEach(notice => {
           users.forEach(user => {
-            bot.telegram.sendMessage(user[1].chatId, notice.title);
+            sendReplyToUser(user[1].chatId, `${notice.title}\n${notice.link}`);
           });
         });
       });
@@ -52,6 +58,10 @@ function saveTelegramUsers(fromId, chatId) {
     .database()
     .ref("telegrams/" + newUser)
     .set(userObj);
+}
+
+function sendReplyToUser(chatId, message) {
+  axios.get(`${botBaseUrl}/sendMessage?chat_id=${chatId}&text=${message}`);
 }
 
 module.exports = {

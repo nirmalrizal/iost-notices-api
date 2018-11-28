@@ -3,7 +3,7 @@ const firebase = require("firebase");
 const webpush = require("web-push");
 
 const fetchNotices = require("../src/fetch-notices");
-// const sendNoticeToUser = require("../src/telegram-bot");
+const sendNoticeToUser = require("../src/telegram-bot-custom").sendNoticeToUser;
 
 // Initialize web-push
 webpush.setGCMAPIKey(process.env.GCMAPI_KEY);
@@ -57,7 +57,7 @@ function handleNewNotices(notices) {
         saveAndSendForSingleNotice(notice, subscribers);
       });
 
-      // sendNoticeToUser(notices);
+      sendNoticeToUser(notices);
     });
 }
 

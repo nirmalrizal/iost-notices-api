@@ -40,7 +40,7 @@ router.post("/remove/subscriber", function(req, res) {
 });
 
 router.post("/get/telegram/updates", function(req, res) {
-  handleBotUpdates(req.body());
+  handleBotUpdates(req.body);
   res.send(true);
 });
 
