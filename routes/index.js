@@ -38,4 +38,9 @@ router.post("/remove/subscriber", function(req, res) {
   res.send(true);
 });
 
+router.get("/get/telegram/updates", function(req, res) {
+  console.log(req.body);
+  res.send(true);
+});
+
 module.exports = router;

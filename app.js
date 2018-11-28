@@ -8,6 +8,7 @@ const firebase = require("firebase");
 const exphbs = require("express-handlebars");
 
 const pushNotifications = require("./src/push-notification");
+require("./src/telegram-bot");
 
 var indexRouter = require("./routes/index");
 
@@ -41,7 +42,7 @@ var intervalWork = setInterval(function() {
   checkTimeAndSendNotifications();
 }, TOTAL_MILISECONDS_IN_MINUTE);
 
-// checkTimeAndSendNotifications();
+// pushNotifications();
 
 function checkTimeAndSendNotifications() {
   var currentDate = new Date();
