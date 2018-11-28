@@ -21,10 +21,7 @@ function handleBotUpdates(data) {
       sendReplyToUser(chatId, `No action found for command : ${text}`);
     }
   } else {
-    sendReplyToUser(
-      chatId,
-      "We are very sorry. You cannot interact with the bot."
-    );
+    sendReplyToUser(chatId, "So sorry !! You cannot interact with the bot.");
   }
 }
 
