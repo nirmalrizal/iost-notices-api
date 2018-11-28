@@ -5,10 +5,10 @@ const axios = require("axios");
 const botBaseUrl = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
 
 function handleBotUpdates(data) {
-  const { from, chat, entities } = data;
-  const fromId = from.id;
+  const { chat } = data;
+  //   const fromId = from.id;
   const chatId = chat.id;
-  if (entities && entities.type === "bot_command") {
+  if (data.entities && data.entities.type === "bot_command") {
     console.log("I will handle this");
   } else {
     sendReplyToUser(
